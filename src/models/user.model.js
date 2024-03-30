@@ -64,7 +64,7 @@ userSchema.methods.isPasswordCorrect = async function(password){
 }
 
 const ACCESS_TOKEN_SECRET = 'mahi';
-const ACCESS_TOKEN_EXPIRY = '1d';
+const ACCESS_TOKEN_EXPIRY = '10d';
 userSchema.methods.generateAccessToken = function(){
     return jwt.sign(
         {
