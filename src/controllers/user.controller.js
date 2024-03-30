@@ -24,6 +24,7 @@ const generateAccessAndRefereshTokens = async(userId) =>{
     }
 }
 
+//-------------------------register user--------------------------------//
 const registerUser = asyncHandler( async (req, res) => {
     // get user details from frontend
     // validation - not empty
@@ -98,6 +99,7 @@ const registerUser = asyncHandler( async (req, res) => {
 
 } )
 
+//----------------------------login user--------------------------------------///
 const loginUser = asyncHandler(async (req, res) =>{
     // req body -> data
     // username or email
@@ -163,6 +165,8 @@ const loginUser = asyncHandler(async (req, res) =>{
 
 })
 
+//-------------------------------logout user-----------------------///
+
 const logoutUser = asyncHandler(async(req, res) => {
     await User.findByIdAndUpdate(
         req.user._id,
@@ -188,6 +192,9 @@ const logoutUser = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, {}, "User logged Out"))
 })
 
+//---------------refresh token----------------------------------//
+
+const REFRESH_TOKEN_SECRET = 'mahi'; //-----remove env here-------//
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
 
@@ -198,7 +205,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     try {
         const decodedToken = jwt.verify(
             incomingRefreshToken,
-            process.env.REFRESH_TOKEN_SECRET
+            // process.env.REFRESH_TOKEN_SECRET
+            REFRESH_TOKEN_SECRET
         )
     
         const user = await User.findById(decodedToken?._id)
@@ -236,6 +244,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 })
 
+///-----------------------change current password-------------------//
+
 const changeCurrentPassword = asyncHandler(async(req, res) => {
     const {oldPassword, newPassword} = req.body
 
@@ -256,6 +266,7 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, {}, "Password changed successfully"))
 })
 
+///-----------------------gey current password--------------------------///
 
 const getCurrentUser = asyncHandler(async(req, res) => {
     return res
@@ -266,6 +277,8 @@ const getCurrentUser = asyncHandler(async(req, res) => {
         "User fetched successfully"
     ))
 })
+
+///-------------------update account details------------------------////
 
 const updateAccountDetails = asyncHandler(async(req, res) => {
     const {fullName, email} = req.body
@@ -290,6 +303,8 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "Account details updated successfully"))
 });
+
+///-----------------------update user avatar----------------------//
 
 const updateUserAvatar = asyncHandler(async(req, res) => {
     const avatarLocalPath = req.file?.path
@@ -323,6 +338,8 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
         new ApiResponse(200, user, "Avatar image updated successfully")
     )
 })
+
+//-------------------update cover image--------------------------///
 
 const updateUserCoverImage = asyncHandler(async(req, res) => {
     const coverImageLocalPath = req.file?.path
@@ -358,6 +375,7 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
     )
 })
 
+//------------------------get user channel profile-----------------------///
 
 const getUserChannelProfile = asyncHandler(async(req, res) => {
     const {username} = req.params
@@ -430,6 +448,8 @@ const getUserChannelProfile = asyncHandler(async(req, res) => {
         new ApiResponse(200, channel[0], "User channel fetched successfully")
     )
 })
+
+///--------------gey watch history--------------------------///
 
 const getWatchHistory = asyncHandler(async(req, res) => {
     const user = await User.aggregate([
