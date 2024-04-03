@@ -144,7 +144,7 @@ const loginUser = asyncHandler(async (req, res) =>{
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
-    const options = {
+    const options = { //--------sending cookies here,httponly use where cookies modifies only on server, not from the frontend----------////
         httpOnly: true,
         secure: true
     }
@@ -266,7 +266,7 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, {}, "Password changed successfully"))
 })
 
-///-----------------------gey current password--------------------------///
+///-----------------------get current details--------------------------///
 
 const getCurrentUser = asyncHandler(async(req, res) => {
     return res
@@ -379,15 +379,20 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
 
 const getUserChannelProfile = asyncHandler(async(req, res) => {
     const {username} = req.params
+  
 
     if (!username?.trim()) {
         throw new ApiError(400, "username is missing")
     }
+    // console.log(username);
+
 
     const channel = await User.aggregate([
         {
             $match: {
-                username: username?.toLowerCase()
+                fullName: username?.toLowerCase()
+                // username: username
+
             }
         },
         {
@@ -438,9 +443,12 @@ const getUserChannelProfile = asyncHandler(async(req, res) => {
         }
     ])
 
+
     if (!channel?.length) {
         throw new ApiError(404, "channel does not exists")
     }
+    console.log(channel);
+
 
     return res
     .status(200)
@@ -449,7 +457,7 @@ const getUserChannelProfile = asyncHandler(async(req, res) => {
     )
 })
 
-///--------------gey watch history--------------------------///
+///--------------get watch history--------------------------///
 
 const getWatchHistory = asyncHandler(async(req, res) => {
     const user = await User.aggregate([
